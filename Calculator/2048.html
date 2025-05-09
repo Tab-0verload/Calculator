@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>2048</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #00131c;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            color: #2e7d32;
+        }
+    a {
+            color: black;
+            text-decoration: none;
+        }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <a href="../index.html"><назад</a><br>
+  <label>Начальное число:</label>
+  <input type="number" id="start"/>
+
+  <label>Множитель:</label>
+  <input type="number" id="multiplier"/>
+
+  <label>Сколько чисел:</label>
+  <input type="number" id="count"/>
+
+  <div class="result" id="output">
+  </div>
+  <script>
+    const startInput = document.getElementById("start");
+    const multiplierInput = document.getElementById("multiplier");
+    const countInput = document.getElementById("count");
+    const output = document.getElementById("output");
+
+    function updateOutput() {
+      const start = parseFloat(startInput.value);
+      const multiplier = parseFloat(multiplierInput.value);
+      const count = parseInt(countInput.value);
+
+      if (isNaN(start) || isNaN(multiplier) || isNaN(count)) {
+        output.textContent = "Введите корректные значения";
+        return;
+      }
+
+      let result = [];
+      let value = start;
+      for (let i = 0; i < count; i++) {
+        result.push(value);
+        value *= multiplier;
+      }
+
+      output.textContent = "Результат: " + result.join(", ");
+    }
+
+    startInput.addEventListener("input", updateOutput);
+    multiplierInput.addEventListener("input", updateOutput);
+    countInput.addEventListener("input", updateOutput);
+
+    updateOutput(); // Первый вывод
+  </script>
+</body>
+</html>

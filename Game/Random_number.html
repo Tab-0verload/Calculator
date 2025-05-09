@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Random number</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #00131c;
+        }
+        .container {
+            text-align: center;
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 97%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            color: #2e7d32;
+        }
+        button{
+          font-size: 16px;
+        }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <h2>Игра: Угадай число от 1 до 100</h2>
+
+  <input id="guessInput" type="number" placeholder="Введи число">
+  <button onclick="checkGuess()">Проверить</button>
+  <button onclick="newGame()">Новая игра</button>
+
+  <p class="result" id="result"></p>
+  <p id="triesInfo"></p>
+  </div>
+
+
+  <script>
+    let secretNumber;
+    let tries;
+
+    function startGame() {
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      tries = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("triesInfo").textContent = "";
+      document.getElementById("guessInput").value = "";
+      document.getElementById("guessInput").focus();
+    }
+
+    function checkGuess() {
+      const input = document.getElementById("guessInput");
+      const result = document.getElementById("result");
+      const triesInfo = document.getElementById("triesInfo");
+
+      const guess = Number(input.value);
+      tries++;
+
+      if (guess > secretNumber) {
+        result.textContent = "Слишком много!";
+      } else if (guess < secretNumber) {
+        result.textContent = "Слишком мало!";
+      } else {
+        result.textContent = "Угадал! Это было " + secretNumber;
+      }
+
+      triesInfo.textContent = "Попыток: " + tries;
+      input.value = "";
+      input.focus();
+    }
+
+    function newGame() {
+      startGame();
+    }
+
+    // запускаем игру при загрузке страницы
+    startGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flower</title>
+  <style>
+    body{
+      background: #00131c;
+      color: white;
+    }
+    canvas {
+      border: 1px solid white;
+      display: block;
+      margin: 20px auto;
+      image-rendering: pixelated;
+    }
+    .palette {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .color {
+      width: 40px;
+      height: 40px;
+      border: 2px solid white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" width="320" height="320"></canvas>
+
+<div class="palette">
+  <div class="color" style="background:red" data-color="red"></div>
+  <div class="color" style="background:orange" data-color="orange"></div>
+  <div class="color" style="background:yellow" data-color="yellow"></div>
+  <div class="color" style="background:green" data-color="green"></div>
+  <div class="color" style="background:blue" data-color="blue"></div>
+  <div class="color" style="background:purple" data-color="purple"></div>
+  <div class="color" style="background:pink" data-color="pink"></div>
+  <div class="color" style="background:black" data-color="black"></div>
+  <div class="color" style="background:white" data-color="white"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const pixelSize = 40;
+
+// Цветок с подсказками (цвета - бледные)
+let flower = [
+  ['','','p','p','p','p','',''],
+  ['','p','p','r','r','p','p',''],
+  ['p','p','r','r','r','r','p','p'],
+  ['p','r','r','y','y','r','r','p'],
+  ['p','r','r','y','y','r','r','p'],
+  ['p','p','r','r','r','r','p','p'],
+  ['','p','p','g','g','p','p',''],
+  ['','','g','g','g','g','','']
+];
+
+// Цвета-подсказки (бледные)
+const pastel = {
+  'p': '#ffe6f0', // light pink
+  'r': '#ffcccc', // light red
+  'y': '#ffffcc', // light yellow
+  'g': '#ccffcc', // light green
+  '': ''          // пустота
+};
+
+// Пользовательские цвета (по умолчанию - как подсказки)
+let colorData = flower.map(row => row.map(cell => pastel[cell] || ''));
+
+let currentColor = 'red';
+
+function drawFlower() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < flower.length; y++) {
+    for (let x = 0; x < flower[y].length; x++) {
+      if (flower[y][x] !== '') {
+        ctx.fillStyle = colorData[y][x];
+        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+        ctx.strokeRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+      }
+    }
+  }
+}
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const x = Math.floor(mx / pixelSize);
+  const y = Math.floor(my / pixelSize);
+
+  if (flower[y] && flower[y][x] !== '') {
+    colorData[y][x] = currentColor;
+    drawFlower();
+  }
+});
+
+document.querySelectorAll('.color').forEach(el => {
+  el.addEventListener('click', () => {
+    currentColor = el.getAttribute('data-color');
+  });
+});
+
+drawFlower();
+</script>
+</body>
+</html>

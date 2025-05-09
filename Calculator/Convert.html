@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Convert</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #00131c;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        input {
+            width: 72%;
+            padding: 8px;
+            margin: 1px 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            color: #2e7d32;
+            text-align: center;
+        }
+    a {
+            color: black;
+            text-decoration: none;
+        }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="../index.html"><назад</a><br>
+    <h2>Римский калькулятор</h1>
+    <input type="text" id="input" placeholder="Введите число (например, 42 или XLII)" />
+    <div class="result" id="output">Введите данные</div>
+
+    <h2>Научная форма числа</h2>
+
+    <label for="number">Введите число:</label>
+    <input type="number" id="number" />
+
+    <label for="precision">Знаков после точки:</label>
+    <input type="number" id="precision" min="0" max="20" />
+
+    <div class="result" id="result">Введите данные</div>
+
+  </div>
+  
+
+
+
+  <script>
+    const romanMap = [
+      ["M", 1000],
+      ["CM", 900],
+      ["D", 500],
+      ["CD", 400],
+      ["C", 100],
+      ["XC", 90],
+      ["L", 50],
+      ["XL", 40],
+      ["X", 10],
+      ["IX", 9],
+      ["V", 5],
+      ["IV", 4],
+      ["I", 1],
+    ];
+
+    function toRoman(num) {
+      if (num < 1 || num > 3999) return "Только 1–3999";
+      let result = "";
+      for (let [roman, val] of romanMap) {
+        while (num >= val) {
+          result += roman;
+          num -= val;
+        }
+      }
+      return result;
+    }
+
+    function fromRoman(str) {
+      str = str.toUpperCase();
+      let i = 0, result = 0;
+      for (let [roman, val] of romanMap) {
+        while (str.substr(i, roman.length) === roman) {
+          result += val;
+          i += roman.length;
+        }
+      }
+      return i === str.length ? result : NaN;
+    }
+
+    const input = document.getElementById("input");
+    const output = document.getElementById("output");
+
+    input.addEventListener("input", () => {
+      const value = input.value.trim();
+      if (!value) {
+        output.textContent = "";
+        return;
+      }
+
+      if (/^\d+$/.test(value)) {
+        output.textContent = toRoman(parseInt(value));
+      } else {
+        const result = fromRoman(value);
+        output.textContent = isNaN(result) ? "Некорректная римская цифра" : result;
+      }
+    });
+
+    const numberInput = document.getElementById("number");
+    const precisionInput = document.getElementById("precision");
+    const resultDiv = document.getElementById("result");
+
+    function updateResult() {
+      const num = parseFloat(numberInput.value);
+      const precision = parseInt(precisionInput.value);
+      
+      if (!isNaN(num)) {
+        const sciForm = num.toExponential(precision);
+        resultDiv.innerText = `Научная форма: ${sciForm}`;
+      } else {
+        resultDiv.innerText = "Пожалуйста, введите число.";
+      }
+    }
+
+    numberInput.addEventListener("input", updateResult);
+    precisionInput.addEventListener("input", updateResult);
+  </script>
+</body>
+</html>

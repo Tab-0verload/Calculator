@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Главная страница</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #121212;
+      color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .wrapper {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 150px;
+      overflow-y: auto;
+    }
+
+    .container {
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      width: 340px;
+      text-align: center;
+      transition: height 0.3s ease;
+    }
+
+    .category {
+      background: #2a2a2a;
+      margin-bottom: 10px;
+      padding: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .category:hover {
+      background: #333;
+    }
+
+    .category-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .arrow {
+      transition: transform 0.3s;
+      font-size: 18px;
+    }
+
+    .category.active .arrow {
+      transform: rotate(180deg);
+    }
+
+    .items {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s;
+    }
+
+    .category.active .items {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    .items a {
+      font-size: 20px;
+      display: block;
+      padding: 10px 0;
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .items a:hover {
+      color: #1e90ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="category" onclick="toggle(this)">
+        <div class="category-title">
+          <span>Калькуляторы</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="items">
+          <a href="Calculator/Time_Speed.html">Дата/Скорость</a>
+          <a href="Calculator/Token.html">Токен</a>
+          <a href="Calculator/Convert.html">Конвертация</a>
+          <a href="Calculator/2048.html">2048</a>
+        </div>
+      </div>
+
+      <div class="category" onclick="toggle(this)">
+        <div class="category-title">
+          <span>Игры</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="items">
+          <a href="Game/2048v1.html">2048</a>
+          <a href="Game/2048v2.html">2048v2</a>
+          <a href="Game/15.html">15</a>
+          <a href="Game/Random_number.html">Случайное число</a>
+        </div>
+      </div>
+
+      <div class="category" onclick="toggle(this)">
+        <div class="category-title">
+          <span>Без названия</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="items">
+          <a href="Not_Name/crypto_password.html">Шифровка</a>
+          <a href="/page3-2"></a>
+          <a href="/page3-3"></a>
+          <a href="/page3-4"></a>
+        </div>
+      </div>
+      
+      <div class="category" onclick="toggle(this)">
+        <div class="category-title">
+          <span>тест</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="items">
+          <a href="test/Draw.html">Рисовать</a>
+          <a href="test/Flower.html">Цветок</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggle(clickedCategory) {
+      const allCategories = document.querySelectorAll('.category');
+
+      allCategories.forEach(category => {
+        if (category !== clickedCategory) {
+          category.classList.remove('active');
+        }
+      });
+
+      clickedCategory.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

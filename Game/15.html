@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>15</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #222;
+      flex-direction: column;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 5px;
+    }
+    .tile {
+      width: 80px;
+      height: 80px;
+      background: #4682B4;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .empty {
+      background: #444;
+      cursor: default;
+    }
+    .button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4682B4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="board" id="board"></div>
+  <button class="button" id="new-game-btn">Новая игра</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const newGameBtn = document.getElementById('new-game-btn');
+    let tiles = [];
+
+    // Функция для создания начальной расстановки
+    function createTiles() {
+      let nums = [...Array(15).keys()].map(n => n + 1).concat([0]);
+
+      // Позиционирование "змейкой"
+      nums = createSnake(nums);
+
+      do {
+        nums.sort(() => Math.random() - 0.5);
+      } while (!isSolvable(nums));
+
+      tiles = nums;
+      render();
+    }
+
+    // Функция для создания расстановки змейкой
+    function createSnake(nums) {
+      let snake = [];
+      let direction = 1; // 1 - вперед, -1 - назад
+      let row = [];
+
+      for (let i = 0; i < 16; i++) {
+        row.push(nums[i]);
+        if (row.length === 4) {
+          if (direction === 1) {
+            snake = snake.concat(row);
+          } else {
+            snake = snake.concat(row.reverse());
+          }
+          row = [];
+          direction *= -1; // Меняем направление
+        }
+      }
+      return snake;
+    }
+
+    // Функция для отрисовки поля
+    function render() {
+      board.innerHTML = '';
+      tiles.forEach((n, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'tile' + (n === 0 ? ' empty' : '');
+        if (n !== 0) tile.textContent = n;
+        tile.addEventListener('click', () => move(i));
+        board.appendChild(tile);
+      });
+    }
+
+    // Функция для перемещения плитки
+    function move(index) {
+      const emptyIndex = tiles.indexOf(0);
+      const [er, ec] = [Math.floor(emptyIndex / 4), emptyIndex % 4];
+      const [r, c] = [Math.floor(index / 4), index % 4];
+
+      if (Math.abs(er - r) + Math.abs(ec - c) === 1) {
+        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+        render();
+        if (isSolved()) setTimeout(() => alert("Поздравляем, вы победили!"), 100);
+      }
+    }
+
+    // Функция для проверки победы
+    function isSolved() {
+      for (let i = 0; i < 15; i++) {
+        if (tiles[i] !== i + 1) return false;
+      }
+      return tiles[15] === 0; // Пустая клетка на последнем месте
+    }
+
+    // Функция для проверки решаемости
+    function isSolvable(arr) {
+      let inv = 0;
+      for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+          if (arr[i] && arr[j] && arr[i] > arr[j]) inv++;
+        }
+      }
+      const emptyRow = Math.floor(arr.indexOf(0) / 4);
+      return (inv + emptyRow) % 2 === 0;
+    }
+
+    // Слушатель на кнопке "Новая игра"
+    newGameBtn.addEventListener('click', createTiles);
+
+    // Запуск игры при первой загрузке
+    createTiles(); 
+  </script>
+</body>
+</html>

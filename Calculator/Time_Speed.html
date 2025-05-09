@@ -1,0 +1,108 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькуляторы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #00131c;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            color: #2e7d32;
+        }
+        a {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+<a href="../index.html"><назад</a><br>
+    <h2>Дата</h2>
+    <label>Часы:</label>
+    <input type="number" id="timeHours" oninput="calculateTime()">
+    <label>Минуты:</label>
+    <input type="number" id="timeMinutes" oninput="calculateTime()">
+    <div class="result" id="timeResult">Введите данные</div>
+
+    <h2>Временя в пути</h2>
+    <label>Скорость (км/ч):</label>
+    <input type="number" id="speed" placeholder="Например, 60" oninput="calculate()">
+    <label>Расстояние (км):</label>
+    <input type="number" id="distance" placeholder="Например, 100" oninput="calculate()">
+    <div class="result" id="result">Введите данные</div>
+</div>
+
+
+
+
+<script>
+    
+    function calculateTime() {
+        let hours = parseInt(document.getElementById("timeHours").value) || 0;
+        let minutes = parseInt(document.getElementById("timeMinutes").value) || 0;
+
+        // Проверим данные, чтобы они корректно вычислялись
+        console.log(`Часы: ${hours}, Минуты: ${minutes}`);
+
+        let totalMinutes = hours * 60 + minutes;
+        let days = Math.floor(totalMinutes / 1440);
+        let remainingHours = Math.floor((totalMinutes % 1440) / 60);
+        let remainingMinutes = totalMinutes % 60;
+
+        let now = new Date();
+        now.setMinutes(now.getMinutes() + totalMinutes);
+        let futureTime = now.toLocaleString();
+
+        // Покажем результат на странице
+        document.getElementById("timeResult").innerHTML = `Перевод: <b>${days}</b> д. <b>${remainingHours}</b> ч. <b>${remainingMinutes}</b> м.<br>Будет: <b>${futureTime}</b>`;
+    }
+
+    function calculate() {
+      const speed = parseFloat(document.getElementById('speed').value);
+      const distance = parseFloat(document.getElementById('distance').value);
+      const resultDiv = document.getElementById('result');
+
+      if (speed > 0 && distance > 0) {
+        const time = distance / speed;
+        const hours = Math.floor(time);
+        const minutes = Math.round((time - hours) * 60);
+        resultDiv.innerText = `Время в пути: ${hours} ч ${minutes} мин`;
+      } else {
+        resultDiv.innerText = 'Введите корректные значения скорости и расстояния.';
+      }
+    }
+</script>
+
+</body>
+</html>

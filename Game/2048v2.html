@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2048</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #score {
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #game-field {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ccc;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .selected {
+      outline: 3px solid darkgreen;
+    }
+    .cell[data-value="2"] { background-color: #f2b179; }
+    .cell[data-value="4"] { background-color: #f59563; }
+    .cell[data-value="8"] { background-color: #f67c5f; }
+    .cell[data-value="16"] { background-color: #f65e3b; }
+    .cell[data-value="32"] { background-color: #edcf72; }
+    .cell[data-value="64"] { background-color: #edcc61; }
+    .cell[data-value="128"] { background-color: #edc850; }
+    .cell[data-value="256"] { background-color: #edc53f; }
+    .cell[data-value="512"] { background-color: #edc22e; }
+    .cell[data-value="1024"] { background-color: #3c3a32; color: white; }
+    .cell[data-value="2048"] { background-color: #2e2a24; color: white; }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #666;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Блок Пазл</h1>
+  <div id="score">Счёт: 0</div>
+  <div id="game-field"></div>
+  <button onclick="initGame()">Заново</button>
+  
+  <script>
+  const fieldSize = 3;
+  let gameField = Array(fieldSize * fieldSize).fill(null);
+  let selectedCellIndex = null;
+  let moveCount = 0;
+
+  function renderField() {
+    const field = document.getElementById("game-field");
+    field.innerHTML = "";
+    gameField.forEach((value, i) => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.setAttribute("data-index", i);
+      if (value !== null) {
+        cell.setAttribute("data-value", value);
+        cell.textContent = value;
+      }
+      field.appendChild(cell);
+    });
+  }
+
+  function spawnRandomBlock() {
+    const emptyCells = gameField.map((v, i) => v === null ? i : -1).filter(i => i !== -1);
+    if (emptyCells.length > 0) {
+      const index = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      gameField[index] = 2;
+      renderField();
+    }
+  }
+
+  document.getElementById("game-field").addEventListener("click", (e) => {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    if (isNaN(index)) return;
+
+    if (selectedCellIndex === null) {
+      if (gameField[index] !== null) {
+        selectedCellIndex = index;
+        e.target.classList.add("selected");
+      }
+    } else {
+      const from = selectedCellIndex;
+      const to = index;
+      const fromValue = gameField[from];
+      const toValue = gameField[to];
+
+      document.querySelector(`[data-index="${from}"]`).classList.remove("selected");
+
+      if (from !== to) {
+        if (toValue === null) {
+          gameField[to] = fromValue;
+          gameField[from] = null;
+          moveCount++;
+        } else if (fromValue === toValue) {
+          gameField[to] *= 2;
+          gameField[from] = null;
+          moveCount++;
+        }
+      }
+
+      selectedCellIndex = null;
+      renderField();
+
+      if (moveCount % 2 === 0) {
+        spawnRandomBlock();
+      }
+    }
+  });
+
+  function initGame() {
+    gameField.fill(null);
+    for (let i = 0; i < 4; i++) {
+      spawnRandomBlock();
+    }
+  }
+
+  initGame();
+</script>
+  
+  
+  
+  
+  
+  </body>
+</html>

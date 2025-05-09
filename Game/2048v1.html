@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>2048</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #222; /* Цвет фона страницы */
+      flex-direction: column;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 5px;
+    }
+
+    .tile {
+      width: 80px;
+      height: 80px;
+      background: #4682B4; /* Цвет фона плитки по умолчанию (синий) */
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    /* Выделение плитки */
+    .highlight {
+      border: 2px solid #FFD700; /* Выделение плитки */
+    }
+
+    /* Цвета плиток в зависимости от их значения */
+    .tile-2 {
+      background-color: #00C851; /* Зеленый для 2 */
+    }
+
+    .tile-4 {
+      background-color: #33b5e5; /* Синий для 4 */
+    }
+
+    .tile-8 {
+      background-color: #ffbb33; /* Оранжевый для 8 */
+    }
+
+    .tile-16 {
+      background-color: #ff4444; /* Красный для 16 */
+    }
+
+    .tile-32 {
+      background-color: #ff7043; /* Оранжевый для 32 */
+    }
+
+    .tile-64 {
+      background-color: #ff4081; /* Розовый для 64 */
+    }
+
+    .tile-128 {
+      background-color: #f44336; /* Красный для 128 */
+    }
+
+    .tile-256 {
+      background-color: #9C27B0; /* Фиолетовый для 256 */
+    }
+
+    .tile-512 {
+      background-color: #3F51B5; /* Синий для 512 */
+    }
+
+    .tile-1024 {
+      background-color: #2196F3; /* Голубой для 1024 */
+    }
+
+    .tile-2048 {
+      background-color: #4CAF50; /* Зеленый для 2048 */
+    }
+
+    .button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4682B4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .info {
+      margin-top: 10px;
+      color: white;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="board" id="board"></div>
+  <div class="info" id="move-info">Возможных ходов: 0</div>
+  <div class="info" id="score-info">Очки: 0</div>
+  <button class="button" id="new-game-btn">Новая игра</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const newGameBtn = document.getElementById('new-game-btn');
+    const moveInfo = document.getElementById('move-info');
+    const scoreInfo = document.getElementById('score-info');
+    let tiles = [];
+    const size = 4;  // Размер поля (4x4)
+    let score = 0; // Счётчик очков
+    
+    // Функция для создания начальной расстановки
+    function createTiles() {
+      // Заполняем поле плитками с числом 2
+      tiles = Array(16).fill(2);
+      score = 0; // Сбрасываем счётчик очков
+      render();
+      updateMoveInfo();
+      updateScoreInfo();
+    }
+
+    // Функция для отрисовки поля
+    function render() {
+      board.innerHTML = '';
+      tiles.forEach((n, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        
+        // Добавляем соответствующий класс в зависимости от значения плитки
+        if (n === 2) {
+          tile.classList.add('tile-2');
+        } else if (n === 4) {
+          tile.classList.add('tile-4');
+        } else if (n === 8) {
+          tile.classList.add('tile-8');
+        } else if (n === 16) {
+          tile.classList.add('tile-16');
+        } else if (n === 32) {
+          tile.classList.add('tile-32');
+        } else if (n === 64) {
+          tile.classList.add('tile-64');
+        } else if (n === 128) {
+          tile.classList.add('tile-128');
+        } else if (n === 256) {
+          tile.classList.add('tile-256');
+        } else if (n === 512) {
+          tile.classList.add('tile-512');
+        } else if (n === 1024) {
+          tile.classList.add('tile-1024');
+        } else if (n === 2048) {
+          tile.classList.add('tile-2048');
+        }
+
+        if (n !== 0) tile.textContent = n;
+        tile.addEventListener('click', () => selectTile(i));
+        board.appendChild(tile);
+      });
+    }
+
+    // Функция для получения соседей плитки по вертикали и горизонтали
+    function getNeighbors(index) {
+      const neighbors = [];
+      const row = Math.floor(index / size);
+      const col = index % size;
+
+      // Горизонтальные соседи
+      if (col > 0) neighbors.push(index - 1); // Слева
+      if (col < size - 1) neighbors.push(index + 1); // Справа
+
+      // Вертикальные соседи
+      if (row > 0) neighbors.push(index - size); // Сверху
+      if (row < size - 1) neighbors.push(index + size); // Снизу
+
+      return neighbors;
+    }
+
+    // Функция для выбора плитки
+    function selectTile(index) {
+      const selectedTileElement = document.querySelector('.highlight');
+      if (selectedTileElement) {
+        selectedTileElement.classList.remove('highlight');
+      }
+
+      // Выделяем плитку
+      document.querySelectorAll('.tile')[index].classList.add('highlight');
+      
+      // Получаем всех соседей выбранной плитки
+      const neighbors = getNeighbors(index);
+      const selectedValue = tiles[index];
+      
+      // Ищем случайного соседа с таким же числом
+      const matchingNeighbor = neighbors.find(i => tiles[i] === selectedValue);
+      
+      if (matchingNeighbor !== undefined) {
+        // Сохраняем значение плитки для счёта
+        const mergedValue = tiles[matchingNeighbor];
+        
+        // Объединяем плитки
+        tiles[matchingNeighbor] = tiles[matchingNeighbor] * 2; // Удваиваем число на соседней плитке
+        tiles[index] = 2; // Плитка на выбранной позиции возвращается к числу 2
+
+        // Добавляем очки в счётчик
+        score += mergedValue;
+
+        // Обновляем поле и информацию
+        render();
+        updateMoveInfo();
+        updateScoreInfo();
+      }
+    }
+
+    // Функция для обновления информации о возможных ходах
+    function updateMoveInfo() {
+      const possibleMoves = countPossibleMoves();
+      moveInfo.textContent = `Возможных ходов: ${possibleMoves}`;
+    }
+
+    // Функция для обновления информации о счёте
+    function updateScoreInfo() {
+      scoreInfo.textContent = `Очки: ${score}`;
+    }
+
+    // Функция для подсчёта возможных ходов на поле
+    function countPossibleMoves() {
+      let possibleMoves = 0;
+      
+      for (let i = 0; i < tiles.length; i++) {
+        const neighbors = getNeighbors(i);
+        const selectedValue = tiles[i];
+        
+        // Ищем хотя бы один соседний блок с таким же числом
+        for (let j = 0; j < neighbors.length; j++) {
+          if (tiles[neighbors[j]] === selectedValue) {
+            possibleMoves++;
+            break;
+          }
+        }
+      }
+      
+      return possibleMoves;
+    }
+
+    // Слушатель на кнопке "Новая игра"
+    newGameBtn.addEventListener('click', createTiles);
+
+    // Запуск игры при первой загрузке
+    createTiles();
+  </script>
+</body>
+</html>
